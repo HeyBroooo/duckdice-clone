@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from 'react'
-import { Trophy, Gift, Calendar, Award, MessageSquare, BarChart2, Dice1Icon as Dice, ChevronRight, ChevronLeft, Crown, Coins, Target, Users, TrendingUp, Zap, Settings } from 'lucide-react'
+import { Trophy, Gift, Calendar, MessageSquare, Dice1Icon as Dice, ChevronRight, ChevronLeft, Crown, Coins, Target, Users, TrendingUp, Zap, Settings } from 'lucide-react'
 
 export function SideBar() {
   const [isCollapsed, setIsCollapsed] = useState(false)
