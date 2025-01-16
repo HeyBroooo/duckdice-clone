@@ -43,7 +43,7 @@ export function GameSections() {
   return (
     <div className="space-y-8 my-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {popularGames.map((game, index) => (
+        {popularGames.map((game) => (
           <div 
             key={game.name}
             className={`relative group overflow-hidden rounded-xl bg-gradient-to-br ${game.color} transform hover:scale-105 transition-all duration-300`}
