@@ -1,6 +1,6 @@
 "use client"
 
-import { Bell, Settings, Mail, Menu, X, ChevronLeft , ChevronRight, DollarSign, ListPlus, ListVideo } from 'lucide-react'
+import { Bell, Settings, Mail, Menu, X, DollarSign, ListPlus, ListVideo } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useSidebar } from '../context/SidebarContext'
 import { LanguageSelector } from './language-selector'
