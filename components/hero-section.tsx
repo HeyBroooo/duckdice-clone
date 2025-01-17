@@ -57,7 +57,7 @@ export function HeroSection() {
       {/* Animated coins */}
       <div className="absolute right-0 top-0 h-full w-1/2 pointer-events-none">
         <Image
-          src="https://www.shutterstock.com/shutterstock/photos/2254503505/display_1500/stock-photo-golden-coin-with-dollar-symbol-realistic-in-d-render-isolated-on-white-background-d-illustration-2254503505.jpg"
+          src="https://img.freepik.com/free-vector/slot-machine-big-win-concept-realistic-style_52683-8950.jpg?t=st=1737142133~exp=1737145733~hmac=4bd140a138013a712e35b90ad39280a99edc03e29b71347a42a8ac5c488ec91b&w=740"
           alt="Floating coins"
           width={200}
           height={200}

@@ -14,6 +14,10 @@ import {
   TrendingUp,
   Zap,
   Settings,
+  Share2,
+  Facebook,
+  Twitter,
+  Linkedin,
 } from "lucide-react";
 import { useSidebar } from "../context/SidebarContext";
 import { useState, useEffect } from "react";
@@ -23,6 +27,7 @@ export function SideBar() {
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isShareTooltipVisible, setIsShareTooltipVisible] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -57,10 +62,18 @@ export function SideBar() {
     { icon: <TrendingUp className="w-5 h-5 text-green-500" />, label: "Statistics" },
     { icon: <Zap className="w-5 h-5 text-yellow-500" />, label: "Tournaments" },
     { icon: <Settings className="w-5 h-5 text-gray-400" />, label: "Settings" },
+    {
+      icon: <Share2 className="w-5 h-5 text-blue-600" />,
+      label: "Share",
+    },
   ];
 
   const handleSubmenuToggle = (label: string) => {
     setActiveSubmenu(activeSubmenu === label ? null : label);
+  };
+
+  const handleShareClick = () => {
+    setIsShareTooltipVisible((prev) => !prev); // Toggle share tooltip visibility
   };
 
   if (!isMounted) return null;
@@ -69,44 +82,41 @@ export function SideBar() {
     <>
       {/* Sidebar */}
       <aside
-        className={`
-          fixed top-16 left-0 h-[calc(100vh-4rem)]
+        className={`fixed top-16 left-0 h-[calc(100vh-4rem)]
           ${isCollapsed ? "w-16" : "w-64"} 
           bg-gray-800 text-gray-300
           transform transition-all duration-300 ease-in-out
           ${isCollapsed ? "-translate-x-full lg:translate-x-0" : "translate-x-0"}
-          z-40 overflow-y-auto
-        `}
+          z-40 overflow-y-auto`}
       >
         <div className="h-full flex flex-col justify-between py-4">
           {/* Menu Items */}
           <div className="space-y-2 px-2">
             {menuItems.map((item, index) => (
-              <div key={index} className="relative group">
+              <div key={index} className="relative">
                 <div
-                  className={`
-                    flex items-center rounded-lg p-2
-                    ${!item.submenu ? "hover:bg-gray-700" : ""}
-                    transition-colors cursor-pointer
-                  `}
-                  onClick={() => item.submenu && handleSubmenuToggle(item.label)}
+                  className={`flex items-center rounded-lg p-2 ${
+                    !item.submenu && item.label !== "Share" ? "hover:bg-gray-700" : ""
+                  } transition-colors cursor-pointer`}
+                  onClick={() => {
+                    if (item.label === "Share") {
+                      handleShareClick();
+                    } else if (item.submenu) {
+                      handleSubmenuToggle(item.label);
+                    }
+                  }}
                 >
-                  <div
-                    className={`flex items-center ${isCollapsed ? "justify-center w-full" : ""}`}
-                  >
-                    <div className="flex-shrink-0 group-hover:scale-110 transition-transform">
-                      {item.icon}
-                    </div>
+                  <div className={`flex items-center ${isCollapsed ? "justify-center w-full" : ""}`}>
+                    <div className="flex-shrink-0">{item.icon}</div>
                     {!isCollapsed && <span className="ml-3 text-sm">{item.label}</span>}
                   </div>
                   {!isCollapsed && item.badge && (
                     <span
-                      className={`
-                        ml-auto text-xs px-1.5 py-0.5 rounded
-                        ${item.badgeColor}
-                        ${item.badgeColor.startsWith("text") ? "" : "text-white"}
-                        ${item.badge === "NEW" ? "animate-pulse" : ""}
-                      `}
+                      className={`ml-auto text-xs px-1.5 py-0.5 rounded ${
+                        item.badgeColor
+                      } ${item.badgeColor.startsWith("text") ? "" : "text-white"} ${
+                        item.badge === "NEW" ? "animate-pulse" : ""
+                      }`}
                     >
                       {item.badge}
                     </span>
@@ -129,40 +139,31 @@ export function SideBar() {
                     ))}
                   </div>
                 )}
-                {isCollapsed && (
-                  <div
-                    className="
-                      absolute left-full top-0 ml-2 p-2 bg-gray-900 rounded-md
-                      invisible group-hover:visible opacity-0 group-hover:opacity-100
-                      transition-opacity duration-200 whitespace-nowrap z-50
-                    "
-                  >
-                    <span className="text-sm">{item.label}</span>
-                    {item.badge && (
-                      <span
-                        className={`
-                          ml-2 text-xs px-1.5 py-0.5 rounded
-                          ${item.badgeColor}
-                          ${item.badgeColor.startsWith("text") ? "" : "text-white"}
-                        `}
-                      >
-                        {item.badge}
-                      </span>
-                    )}
-                  </div>
-                )}
               </div>
             ))}
+            {/* Share Tooltip */}
+            {isShareTooltipVisible && (
+              <div
+                className="absolute left-[100px] top-[75%] -translate-y-1/2 ml-2 p-2 bg-transparent bg-opacity-80 text-white border border-gray-600 rounded-full
+                            flex flex-row items-start gap-2 shadow-lg z-50"
+              >
+                <button className="p-2 rounded-full hover:bg-gray-700 transition border border-gray-700">
+                  <Facebook className="w-5 h-5 text-blue-500" />
+                </button>
+                <button className="p-2 rounded-full hover:bg-gray-700 transition border border-gray-700">
+                  <Twitter className="w-5 h-5 text-sky-400" />
+                </button>
+                <button className="p-2 rounded-full hover:bg-gray-700 transition border border-gray-700">
+                  <Linkedin className="w-5 h-5 text-blue-700" />
+                </button>
+              </div>
+            )}
           </div>
           {/* Collapse Button */}
           {!isMobile && (
             <button
               onClick={toggleSidebar}
-              className="
-                absolute bottom-4 right-2
-                bg-gray-700 hover:bg-gray-600 rounded-full p-1.5
-                transition-colors duration-200
-              "
+              className="absolute bottom-4 right-2 bg-gray-700 hover:bg-gray-600 rounded-full p-1.5 transition-colors duration-200"
             >
               {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
             </button>
@@ -174,14 +175,9 @@ export function SideBar() {
       {isMobile && (
         <button
           onClick={toggleSidebar}
-          className="
-            fixed top-20 left-4
-            bg-gray-700 hover:bg-gray-600 rounded-full p-2
-            transition-colors duration-200
-            z-50
-          "
+          className="fixed top-20 left-4 bg-gray-700 hover:bg-gray-600 text-white rounded-full p-2 z-50"
         >
-          {isCollapsed ? <ChevronRight className="w-6 h-6" /> : <ChevronLeft className="w-6 h-6" />}
+          {isCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
         </button>
       )}
     </>

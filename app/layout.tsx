@@ -1,5 +1,10 @@
+"use client"
+
 import { SidebarProvider } from '../context/SidebarContext'
-import '/styles/globals.css'
+import { NavBar } from '@/components/nav-bar'
+import { SideBar } from '@/components/side-bar'
+import { RightPanel } from '@/components/right-panel'
+import '../styles/globals.css'
 
 export default function RootLayout({
   children,
@@ -10,10 +15,18 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <SidebarProvider>
-          {children}
+          <div className="min-h-screen bg-gray-900 flex flex-col">
+            <NavBar />
+            <div className="flex flex-1 overflow-hidden">
+              <SideBar />
+              <main className="flex-1 overflow-y-auto transition-all duration-300">
+                {children}
+              </main>
+              <RightPanel />
+            </div>
+          </div>
         </SidebarProvider>
       </body>
     </html>
   )
 }
-
