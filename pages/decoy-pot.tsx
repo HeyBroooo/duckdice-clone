@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
-import { Trophy, Clock, Info, DollarSign } from "lucide-react"
+import { Trophy, Clock, DollarSign } from "lucide-react"
 
 const leaderboardData = [
   { rank: 1, username: "Player1", score: 120.5, prize: 500, avatar: "https://www.shutterstock.com/shutterstock/photos/2254503505/display_1500/stock-photo-golden-coin-with-dollar-symbol-realistic-in-d-render-isolated-on-white-background-d-illustration-2254503505.jpg" },

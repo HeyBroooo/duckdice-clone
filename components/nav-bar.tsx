@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { 
   X, 
-  Search, 
   Bitcoin, 
   Wallet,
   ChevronDown, 
@@ -182,7 +181,6 @@ import {
 import {  useEffect } from 'react'
 import { useSidebar } from '../context/SidebarContext'
 import { LanguageSelector } from './language-selector'
-import { Avatar } from '@radix-ui/react-avatar'
 
 export function NavBar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)

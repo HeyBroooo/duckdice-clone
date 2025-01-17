@@ -1,7 +1,4 @@
 "use client"
-
-import { NavBar } from "@/components/nav-bar"
-import { SideBar } from "@/components/side-bar"
 import { HeroSection } from "@/components/hero-section"
 import { CryptoTicker } from "@/components/crypto-ticker"
 import { GameSections } from "@/components/game-sections"
