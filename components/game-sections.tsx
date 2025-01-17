@@ -81,12 +81,12 @@ export function GameSections() {
             <div key={index} className="bg-gray-700 rounded-lg overflow-hidden group hover:ring-2 hover:ring-yellow-500 transition-all">
               <div className="relative h-32">
                 <Image
-                  src={`/placeholder.svg?height=150&width=250&text=Live+Game+${index + 1}`}
+                  src={"https://www.shutterstock.com/shutterstock/photos/2491656925/display_1500/stock-photo-coins-cryptocurrency-and-online-trading-statistics-value-and-international-commerce-for-finance-2491656925.jpg"}
                   alt={`Live Game ${index + 1}`}
                   fill
                   className="object-cover"
                 />
-                <div className="absolute top-2 right-2 bg-red-500 px-2 py-1 rounded text-xs text-white animate-pulse">
+                <div className="absolute top-2 right-2 bg-red-700 px-2 py-1 rounded text-xs text-white animate-pulse">
                   LIVE
                 </div>
               </div>
