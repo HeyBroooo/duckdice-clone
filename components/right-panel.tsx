@@ -1,39 +1,36 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Trophy, Clock, Info } from 'lucide-react'
 import Image from 'next/image'
 import { useSidebar } from '../context/SidebarContext'
 
-const leaderboardData = [
-  { rank: 1, username: "CashyFlow_Kick", score: 87.13, prize: 100, points: 10000, level: 5, avatar: "https://www.shutterstock.com/shutterstock/photos/2471601163/display_1500/stock-photo-create-an-avatar-for-an-ai-solution-for-sales-must-be-a-young-woman-with-purple-hair-wearing-2471601163.jpg" },
-  { rank: 2, username: "Ykucalycog723", score: 51.60, prize: 75, points: 7500, level: 4, avatar: "https://www.shutterstock.com/shutterstock/photos/2471601163/display_1500/stock-photo-create-an-avatar-for-an-ai-solution-for-sales-must-be-a-young-woman-with-purple-hair-wearing-2471601163.jpg" },
-  { rank: 3, username: "phuynh3", score: 44.35, prize: 50, points: 5000, level: 3, avatar: "https://www.shutterstock.com/shutterstock/photos/2471601163/display_1500/stock-photo-create-an-avatar-for-an-ai-solution-for-sales-must-be-a-young-woman-with-purple-hair-wearing-2471601163.jpg" },
-  { rank: 4, username: "Yung3000", score: 33.65, prize: 45, points: 4500, level: 3, avatar: "https://www.shutterstock.com/shutterstock/photos/2471601163/display_1500/stock-photo-create-an-avatar-for-an-ai-solution-for-sales-must-be-a-young-woman-with-purple-hair-wearing-2471601163.jpg" },
-  { rank: 5, username: "CryptoKing", score: 31.22, prize: 40, points: 4000, level: 4, avatar: "https://www.shutterstock.com/shutterstock/photos/2471601163/display_1500/stock-photo-create-an-avatar-for-an-ai-solution-for-sales-must-be-a-young-woman-with-purple-hair-wearing-2471601163.jpg" },
-  { rank: 6, username: "BitMaster", score: 29.87, prize: 35, points: 3500, level: 3, avatar: "https://www.shutterstock.com/shutterstock/photos/2471601163/display_1500/stock-photo-create-an-avatar-for-an-ai-solution-for-sales-must-be-a-young-woman-with-purple-hair-wearing-2471601163.jpg" },
-  { rank: 8, username: "Ykucalycog723", score: 51.60, prize: 75, points: 7500, level: 4, avatar: "https://www.shutterstock.com/shutterstock/photos/2471601163/display_1500/stock-photo-create-an-avatar-for-an-ai-solution-for-sales-must-be-a-young-woman-with-purple-hair-wearing-2471601163.jpg" },
- 
-]
+const generateLeaderboardData = () => {
+  const users = []
+  for (let i = 1; i <= 50; i++) {
+    const score = (100 - i * 1.2 + Math.random() * 5).toFixed(2)
+    users.push({
+      rank: i,
+      username: `Player${i}${i <= 3 ? '🏆' : ''}`,
+      score: parseFloat(score),
+      prize: Math.floor(1000 / i),
+      points: Math.floor(10000 / i),
+      level: Math.max(1, Math.floor(6 - i / 10)),
+      avatar: "https://www.shutterstock.com/shutterstock/photos/2471601163/display_1500/stock-photo-create-an-avatar-for-an-ai-solution-for-sales-must-be-a-young-woman-with-purple-hair-wearing-2471601163.jpg"
+    })
+  }
+  return users
+}
 
-
-
-
-
+const leaderboardData = generateLeaderboardData()
 
 export function RightPanel() {
   const { showRightPanel } = useSidebar()
   const [currentTime, setCurrentTime] = useState("08h:50m:15s")
-  const [scrollIndex, setScrollIndex] = useState(0)
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setScrollIndex((prev) => (prev + 1) % leaderboardData.length)
-    }, 3000)
-    return () => clearInterval(interval)
-  }, [])
-
-  // Add countdown timer effect
+  const [showFullContent, setShowFullContent] = useState(true)
+  const scrollContainerRef = useRef(null)
+  const headerRef = useRef(null)
+  
   useEffect(() => {
     const timer = setInterval(() => {
       const now = new Date()
@@ -45,15 +42,13 @@ export function RightPanel() {
     return () => clearInterval(timer)
   }, [])
 
-  return (
-    <div 
-      className={`
-        fixed top-16 right-0 w-64 bg-gray-800 border-l border-gray-700 h-[calc(100vh-4rem)] 
-        overflow-hidden flex flex-col transform transition-transform duration-300 ease-in-out
-        ${showRightPanel ? 'translate-x-0' : 'translate-x-full'}
-      `}
-    >
-      {/* Event Banner */}
+  const handleScroll = (e:any) => {
+    const scrollTop = e.target.scrollTop
+    setShowFullContent(scrollTop < 10)
+  }
+
+  const topContent = (
+    <div className={`transition-all duration-500 ease-in-out ${showFullContent ? 'opacity-100 max-h-[600px]' : 'opacity-0 max-h-0 overflow-hidden'}`}>
       <div className="p-4 bg-gray-800 border-b border-gray-700">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold text-white">Sniper Race</h3>
@@ -62,7 +57,6 @@ export function RightPanel() {
           </button>
         </div>
 
-        {/* Progress Card */}
         <div className="bg-gray-700/50 rounded-xl p-4">
           <div className="relative overflow-hidden rounded-lg aspect-video mb-3">
             <Image
@@ -87,7 +81,6 @@ export function RightPanel() {
         </div>
       </div>
 
-      {/* Prize Pool */}
       <div className="p-4 border-b border-gray-700">
         <div className="bg-gray-700/50 rounded-lg p-4">
           <div className="flex justify-between items-center mb-2">
@@ -104,60 +97,81 @@ export function RightPanel() {
           </div>
         </div>
       </div>
+    </div>
+  )
 
-      {/* Leaderboard */}
-      <h5 className="text-gray-400 text-center overflow-hidden">LEADERS</h5>
-
-      <div className="flex-1 overflow-hidden">
+  return (
+    <div 
+      className={`
+        fixed top-16 right-0 w-64 bg-gray-800 border-l border-gray-700 h-[calc(100vh-4rem)] 
+        flex flex-col transform transition-transform duration-300 ease-in-out
+        ${showRightPanel ? 'translate-x-0' : 'translate-x-full'}
+      `}
+    >
+      <div 
+        ref={scrollContainerRef}
+        className="flex-1 overflow-y-scroll scrollbar-none"
+        style={{
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          WebkitOverflowScrolling: 'touch'
+        }}
+        onScroll={handleScroll}
+      >
+        {topContent}
+        
+        <div 
+          ref={headerRef}
+          className="sticky top-0 bg-gray-800/95 backdrop-blur-sm border-b border-gray-700 z-10 transition-all duration-300"
+        >
+          <h5 className="text-gray-400 text-center py-3 font-semibold">
+            LEADERS
+          </h5>
+        </div>
 
         <div className="p-4">
-          <div className="space-y-2 relative">
-            <div 
-              className="transition-transform duration-500" 
-              style={{ transform: `translateY(-${scrollIndex * 64}px)` }}
-            >
-              {leaderboardData.map((player) => (
-                <div 
-                  key={player.username}
-                  className="bg-gray-700/50 rounded-lg p-2 flex items-center gap-2 h-16 mb-3"
-                >
-                  <div className={`
-                    w-6 h-6 flex items-center justify-center rounded text-sm
-                    ${player.rank === 1 ? 'bg-yellow-500' : 
-                      player.rank === 2 ? 'bg-gray-400' :
-                      player.rank === 3 ? 'bg-orange-700' : 'bg-gray-600'}
-                  `}>
-                    {player.rank}
-                  </div>
-                  <div className="w-8 h-8 relative rounded-full overflow-hidden">
-                    <Image
-                      src={player.avatar}
-                      alt={player.username}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1">
-                      <span className="text-white font-medium truncate">{player.username}</span>
-                      <div className="flex">
-                        {Array.from({ length: player.level }).map((_, i) => (
-                          <span key={i} className="text-yellow-500 text-xs">★</span>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1 text-sm">
-                      <span className="text-green-500">{player.score}</span>
-                      <Info className="w-3 h-3 text-gray-500" />
+          <div className="space-y-2">
+            {Array(3).fill(leaderboardData).flat().map((player, index) => (
+              <div 
+                key={`${player.username}-${index}`}
+                className="bg-gray-700/50 rounded-lg p-2 flex items-center gap-2 h-16 mb-3 hover:bg-gray-700 transition-all duration-300 ease-in-out"
+              >
+                <div className={`
+                  w-6 h-6 flex items-center justify-center rounded text-sm font-semibold
+                  ${player.rank === 1 ? 'bg-yellow-500' : 
+                    player.rank === 2 ? 'bg-gray-400' :
+                    player.rank === 3 ? 'bg-orange-700' : 'bg-gray-600'}
+                `}>
+                  {player.rank}
+                </div>
+                <div className="w-8 h-8 relative rounded-full overflow-hidden">
+                  <Image
+                    src={player.avatar}
+                    alt={player.username}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1">
+                    <span className="text-white font-medium truncate">{player.username}</span>
+                    <div className="flex">
+                      {Array.from({ length: player.level }).map((_, i) => (
+                        <span key={i} className="text-yellow-500 text-xs">★</span>
+                      ))}
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-white font-medium">${player.prize}</div>
-                    <div className="text-sm text-yellow-500">{player.points}</div>
+                  <div className="flex items-center gap-1 text-sm">
+                    <span className="text-green-500">{player.score}</span>
+                    <Info className="w-3 h-3 text-gray-500" />
                   </div>
                 </div>
-              ))}
-            </div>
+                <div className="text-right">
+                  <div className="text-white font-medium">${player.prize}</div>
+                  <div className="text-sm text-yellow-500">{player.points}</div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

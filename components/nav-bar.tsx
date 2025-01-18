@@ -6,14 +6,78 @@ import {
   Bitcoin, 
   Wallet,
   ChevronDown, 
-  Settings2
+  Settings2,
+  MessageCircle,
+  User,
+  Medal,
+  ChartBar,
+  LogOut,
 } from 'lucide-react';
 
-// Currency Modal Component
 interface CurrencyModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+interface ProfileModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  userName?: string;
+}
+
+
+const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose, userName = "John Doe" }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div 
+      className="fixed inset-0 z-[70]" 
+      onClick={onClose}
+    >
+      <div 
+        className="absolute right-4 top-16 w-64 bg-gray-800 rounded-lg shadow-xl"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="p-4 border-b border-gray-700">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 p-0.5">
+              <div className="w-full h-full rounded-full overflow-hidden">
+                <img
+                  src="https://www.shutterstock.com/shutterstock/photos/2471601163/display_1500/stock-photo-create-an-avatar-for-an-ai-solution-for-sales-must-be-a-young-woman-with-purple-hair-wearing-2471601163.jpg"
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+            <div>
+              <div className="text-white font-medium">{userName}</div>
+              <div className="text-sm text-gray-400">Online</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-2 space-y-1">
+          <MenuItem icon={<MessageCircle size={18} />} text="My Messages" />
+          <MenuItem icon={<User size={18} />} text="My Profile" />
+          <MenuItem icon={<Medal size={18} />} text="My Bets" />
+          <MenuItem icon={<Wallet size={18} />} text="My Finances" />
+          <MenuItem icon={<ChartBar size={18} />} text="Affiliate" />
+          <MenuItem icon={<Settings size={18} />} text="Settings" />
+          <MenuItem icon={<LogOut size={18} />} text="Logout" />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const MenuItem: React.FC<{ icon: React.ReactNode; text: string }> = ({ icon, text }) => (
+  <button className="w-full flex items-center space-x-3 px-4 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition-colors">
+    {icon}
+    <span className="text-sm">{text}</span>
+  </button>
+);
+
+
 
 const CurrencyModal: React.FC<CurrencyModalProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState('crypto');
@@ -40,72 +104,84 @@ const CurrencyModal: React.FC<CurrencyModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-lg">
       <div className="fixed inset-0 flex items-center justify-center p-4" onClick={onClose}>
-        <div 
-          className="bg-gray-800 rounded-lg w-full max-w-md" 
-          onClick={e => e.stopPropagation()}
+        <div
+          className="bg-gray-900 rounded-2xl w-full max-w-lg shadow-xl transition-transform transform scale-95 hover:scale-100"
+          onClick={(e) => e.stopPropagation()}
         >
-          <div className="p-4 space-y-4">
+          <div className="p-6 space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-white">All Currencies</h2>
+              <h2 className="text-2xl font-bold text-white">All Currencies</h2>
               <button
                 onClick={onClose}
-                className="p-1 hover:bg-gray-700 rounded-full transition-colors"
+                className="p-2 hover:bg-gray-800 rounded-full transition-colors"
               >
-                <X className="w-6 h-6 text-gray-300" />
+                <X className="w-6 h-6 text-gray-400" />
               </button>
             </div>
 
-            <div className="flex gap-2">
-              <button
-                className={`flex-1 py-2 rounded transition-colors ${
-                  activeTab === 'crypto'
-                    ? 'bg-gray-700 text-white'
-                    : 'bg-gray-900 text-gray-400'
-                }`}
-                onClick={() => setActiveTab('crypto')}
-              >
-                Crypto
-              </button>
-              <button
-                className={`flex-1 py-2 rounded transition-colors ${
-                  activeTab === 'cash'
-                    ? 'bg-gray-700 text-white'
-                    : 'bg-gray-900 text-gray-400'
-                }`}
-                onClick={() => setActiveTab('cash')}
-              >
-                Cash
-              </button>
-            </div>
+            <div className="relative bg-gray-800 rounded-lg overflow-hidden p-1">
+
+      <div className="relative z-10 flex">
+        <button
+          className={`
+            flex-1 py-3 text-center text-sm font-medium transition-all duration-300
+            ${activeTab === 'crypto' ? 'text-gray-800' : 'text-gray-400 hover:text-gray-200'}
+          `}
+          onClick={() => setActiveTab('crypto')}
+        >
+          Crypto
+        </button>
+        <button
+          className={`
+            flex-1 py-3 text-center text-sm font-medium transition-all duration-300
+            ${activeTab === 'cash' ? 'text-gray-800' : 'text-gray-400 hover:text-gray-200'}
+          `}
+          onClick={() => setActiveTab('cash')}
+        >
+          Cash
+        </button>
+      </div>
+
+
+      <div
+        className="absolute inset-0 transition-all duration-500 ease-in-out p-1"
+        style={{
+          transform: `translateX(${activeTab === 'crypto' ? '0%' : '100%'})`,
+          width: '50%',
+        }}
+      >
+        <div className="w-full h-full rounded-md bg-gradient-to-r from-yellow-400 to-yellow-500 shadow-lg" />
+      </div>
+    </div>
 
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search"
-                className="w-full bg-gray-900 rounded py-2 px-4 pr-10 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-700"
+                placeholder="Search..."
+                className="w-full bg-gray-800 rounded-lg py-3 px-4 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-600"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <Settings2 className="absolute right-3 top-2.5 w-5 h-5 text-gray-500" />
+              <Settings2 className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
             </div>
 
-            <div className="space-y-2 max-h-[300px] overflow-y-auto custom-scrollbar">
+            <div className="space-y-3 max-h-60 overflow-y-auto custom-scrollbar">
               {filteredCurrencies.map((currency) => (
                 <div
                   key={currency.id}
-                  className="flex items-center justify-between p-2 hover:bg-gray-700 rounded cursor-pointer transition-colors"
+                  className="flex items-center justify-between p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <currency.icon className="w-6 h-6 text-gray-300" />
+                    <currency.icon className="w-8 h-8 text-gray-300" />
                     <div>
-                      <div className="font-medium text-white">{currency.symbol}</div>
+                      <div className="text-white font-medium">{currency.symbol}</div>
                       <div className="text-sm text-gray-400">{currency.name}</div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-white">{currency.balance.toFixed(2)}</div>
+                    <div className="text-white font-medium">{currency.balance.toFixed(2)}</div>
                     <div className="text-sm text-gray-400">$0.00</div>
                   </div>
                 </div>
@@ -185,6 +261,7 @@ import { LanguageSelector } from './language-selector'
 export function NavBar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isCurrencyModalOpen, setIsCurrencyModalOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const { isCollapsed, toggleSidebar, showRightPanel, setShowRightPanel } = useSidebar()
   const [isMounted, setIsMounted] = useState(false)
   const currentBalance = "$1234.56"
@@ -203,6 +280,10 @@ export function NavBar() {
     setIsCurrencyModalOpen(true);
   };
 
+  const handleProfileClick = () => {
+    setIsProfileModalOpen(true);
+  };
+
 
   if (!isMounted) {
     return null
@@ -212,7 +293,6 @@ export function NavBar() {
     <>
     <nav className="bg-gray-800/95 backdrop-blur-sm text-gray-300 p-2 sticky top-0 z-50 h-16 border-b border-gray-700">
       <div className="max-w-9xl mx-auto flex items-center justify-between h-full">
-        {/* Left Section */}
         <div className="flex items-center space-x-4">
           <button
             onClick={toggleSidebar}
@@ -238,7 +318,6 @@ export function NavBar() {
           </div>
         </div>
 
-        {/* Middle Section - Wallet */}
         <div className="hidden md:flex items-center space-x-3">
           <div className="px-4 py-1.5 bg-gray-700/50 rounded-lg">
             <span className="text-sm text-gray-400">Balance:</span>
@@ -254,7 +333,6 @@ export function NavBar() {
           </button>
         </div>
 
-        {/* Right Section */}
         <div className="flex items-center space-x-4">
           <div className="hidden sm:flex items-center space-x-3">
             <button className="w-9 h-9 rounded-lg bg-gray-700/50 hover:bg-gray-700 flex items-center justify-center transition-colors">
@@ -276,9 +354,8 @@ export function NavBar() {
             </div>
           </div>
 
-          {/* Profile Section */}
           <div className="flex items-center space-x-3">
-            <div className="relative group">
+            <div className="relative group cursor-pointer" onClick={handleProfileClick}>
               <div className="w-10 h-10 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 p-0.5">
                 <div className="w-full h-full rounded-full overflow-hidden">
                   <img
@@ -308,7 +385,6 @@ export function NavBar() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="sm:hidden mt-2 p-2 space-y-2 bg-gray-800 rounded-lg border border-gray-700 animate-fadeIn">
           <div className="flex items-center justify-between p-2 bg-gray-700/50 rounded-lg">
@@ -344,6 +420,13 @@ export function NavBar() {
 isOpen={isCurrencyModalOpen} 
 onClose={() => setIsCurrencyModalOpen(false)} 
 />
+
+<ProfileModal 
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        userName={userName}
+      />
+
 </>
   )
 }
