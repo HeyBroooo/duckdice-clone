@@ -42,8 +42,8 @@ export function RightPanel() {
     return () => clearInterval(timer)
   }, [])
 
-  const handleScroll = (e:any) => {
-    const scrollTop = e.target.scrollTop
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const scrollTop = (e.target as HTMLDivElement).scrollTop
     setShowFullContent(scrollTop < 10)
   }
 
