@@ -25,12 +25,13 @@ const generateLeaderboardData = () => {
 const leaderboardData = generateLeaderboardData()
 
 export function RightPanel() {
-  const { showRightPanel } = useSidebar()
+  const { showRightPanel, setShowRightPanel } = useSidebar()
   const [currentTime, setCurrentTime] = useState("08h:50m:15s")
   const [showFullContent, setShowFullContent] = useState(true)
-  const scrollContainerRef = useRef(null)
-  const headerRef = useRef(null)
-  
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const headerRef = useRef<HTMLDivElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     const timer = setInterval(() => {
       const now = new Date()
@@ -39,8 +40,41 @@ export function RightPanel() {
       const seconds = String(now.getSeconds()).padStart(2, '0')
       setCurrentTime(`${hours}h:${minutes}m:${seconds}s`)
     }, 1000)
-    return () => clearInterval(timer)
-  }, [])
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        panelRef.current && 
+        !panelRef.current.contains(event.target as Node) && 
+        !(event.target as Element).closest('[data-settings-button="true"]')
+      ) {
+        setShowRightPanel(false)
+      }
+    }
+
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setShowRightPanel(false)
+      }
+    }
+
+    const handleMainScroll = () => {
+      setShowRightPanel(false)
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    window.addEventListener('resize', handleResize)
+    const mainElement = document.querySelector('main')
+    mainElement?.addEventListener('scroll', handleMainScroll)
+
+    handleResize()
+
+    return () => {
+      clearInterval(timer)
+      document.removeEventListener('mousedown', handleClickOutside)
+      window.removeEventListener('resize', handleResize)
+      mainElement?.removeEventListener('scroll', handleMainScroll)
+    }
+  }, [setShowRightPanel])
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const scrollTop = (e.target as HTMLDivElement).scrollTop
@@ -101,80 +135,92 @@ export function RightPanel() {
   )
 
   return (
-    <div 
-      className={`
-        fixed top-16 right-0 w-64 bg-gray-800 border-l border-gray-700 h-[calc(100vh-4rem)] 
-        flex flex-col transform transition-transform duration-300 ease-in-out
-        ${showRightPanel ? 'translate-x-0' : 'translate-x-full'}
-      `}
-    >
-      <div 
-        ref={scrollContainerRef}
-        className="flex-1 overflow-y-scroll scrollbar-none"
-        style={{
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none',
-          WebkitOverflowScrolling: 'touch'
-        }}
-        onScroll={handleScroll}
-      >
-        {topContent}
-        
+    <>
+      {showRightPanel && (
         <div 
-          ref={headerRef}
-          className="sticky top-0 bg-gray-800/95 backdrop-blur-sm border-b border-gray-700 z-10 transition-all duration-300"
+          className="md:hidden fixed inset-0 bg-black/50 z-40"
+          onClick={() => setShowRightPanel(false)}
+        />
+      )}
+      
+      <div 
+        ref={panelRef}
+        data-right-panel="true"
+        className={`
+          fixed top-16 right-0 bg-gray-800 border-l border-gray-700 h-[calc(100vh-4rem)] 
+          flex flex-col transform transition-transform duration-300 ease-in-out z-50
+          md:w-64 w-3/4
+          ${showRightPanel ? 'translate-x-0' : 'translate-x-full'}
+        `}
+      >
+        <div 
+          ref={scrollContainerRef}
+          className="flex-1 overflow-y-scroll scrollbar-none"
+          style={{
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+            WebkitOverflowScrolling: 'touch'
+          }}
+          onScroll={handleScroll}
         >
-          <h5 className="text-gray-400 text-center py-3 font-semibold">
-            LEADERS
-          </h5>
-        </div>
+          {topContent}
+          
+          <div 
+            ref={headerRef}
+            className="sticky top-0 bg-gray-800/95 backdrop-blur-sm border-b border-gray-700 z-10"
+          >
+            <h5 className="text-gray-400 text-center py-3 font-semibold">
+              LEADERS
+            </h5>
+          </div>
 
-        <div className="p-4">
-          <div className="space-y-2">
-            {Array(3).fill(leaderboardData).flat().map((player, index) => (
-              <div 
-                key={`${player.username}-${index}`}
-                className="bg-gray-700/50 rounded-lg p-2 flex items-center gap-2 h-16 mb-3 hover:bg-gray-700 transition-all duration-300 ease-in-out"
-              >
-                <div className={`
-                  w-6 h-6 flex items-center justify-center rounded text-sm font-semibold
-                  ${player.rank === 1 ? 'bg-yellow-500' : 
-                    player.rank === 2 ? 'bg-gray-400' :
-                    player.rank === 3 ? 'bg-orange-700' : 'bg-gray-600'}
-                `}>
-                  {player.rank}
-                </div>
-                <div className="w-8 h-8 relative rounded-full overflow-hidden">
-                  <Image
-                    src={player.avatar}
-                    alt={player.username}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1">
-                    <span className="text-white font-medium truncate">{player.username}</span>
-                    <div className="flex">
-                      {Array.from({ length: player.level }).map((_, i) => (
-                        <span key={i} className="text-yellow-500 text-xs">★</span>
-                      ))}
+          <div className="p-4">
+            <div className="space-y-2">
+              {Array(3).fill(leaderboardData).flat().map((player, index) => (
+                <div 
+                  key={`${player.username}-${index}`}
+                  className="bg-gray-700/50 rounded-lg p-2 flex items-center gap-2 h-16 mb-3 hover:bg-gray-700 transition-all duration-300 ease-in-out"
+                >
+                  <div className={`
+                    w-6 h-6 flex items-center justify-center rounded text-sm font-semibold
+                    ${player.rank === 1 ? 'bg-yellow-500' : 
+                      player.rank === 2 ? 'bg-gray-400' :
+                      player.rank === 3 ? 'bg-orange-700' : 'bg-gray-600'}
+                  `}>
+                    {player.rank}
+                  </div>
+                  <div className="w-8 h-8 relative rounded-full overflow-hidden">
+                    <Image
+                      src={player.avatar}
+                      alt={player.username}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1">
+                      <span className="text-white font-medium truncate">{player.username}</span>
+                      <div className="flex">
+                        {Array.from({ length: player.level }).map((_, i) => (
+                          <span key={i} className="text-yellow-500 text-xs">★</span>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 text-sm">
+                      <span className="text-green-500">{player.score}</span>
+                      <Info className="w-3 h-3 text-gray-500" />
                     </div>
                   </div>
-                  <div className="flex items-center gap-1 text-sm">
-                    <span className="text-green-500">{player.score}</span>
-                    <Info className="w-3 h-3 text-gray-500" />
+                  <div className="text-right">
+                    <div className="text-white font-medium">${player.prize}</div>
+                    <div className="text-sm text-yellow-500">{player.points}</div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-white font-medium">${player.prize}</div>
-                  <div className="text-sm text-yellow-500">{player.points}</div>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }

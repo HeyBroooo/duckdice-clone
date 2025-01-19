@@ -1,6 +1,6 @@
 "use client"
 
-import { SidebarProvider } from '../context/SidebarContext'
+import { SidebarProvider, useSidebar } from '../context/SidebarContext'
 import { NavBar } from '@/components/nav-bar'
 import { SideBar } from '@/components/side-bar'
 import { RightPanel } from '@/components/right-panel'
@@ -17,9 +17,17 @@ export default function RootLayout({
         <SidebarProvider>
           <div className="min-h-screen bg-gray-900 flex flex-col">
             <NavBar />
-            <div className="flex flex-1 overflow-hidden">
+            <div className="flex flex-1 overflow-hidden relative">
               <SideBar />
-              <main className="flex-1 overflow-y-auto transition-all duration-300">
+              <main 
+                className="flex-1 overflow-y-auto transition-all duration-300"
+                onClick={() => {
+                  const { isMobile, showRightPanel, setShowRightPanel, isCollapsed } = useSidebar()
+                  if (isMobile) {
+                    if (showRightPanel) setShowRightPanel(false)
+                  }
+                }}
+              >
                 {children}
               </main>
               <RightPanel />
