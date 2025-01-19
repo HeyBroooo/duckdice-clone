@@ -22,7 +22,7 @@ export default function RootLayout({
               <main 
                 className="flex-1 overflow-y-auto transition-all duration-300"
                 onClick={() => {
-                  const { isMobile, showRightPanel, setShowRightPanel, isCollapsed } = useSidebar()
+                  const { isMobile, showRightPanel, setShowRightPanel } = useSidebar()
                   if (isMobile) {
                     if (showRightPanel) setShowRightPanel(false)
                   }
