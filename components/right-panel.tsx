@@ -40,6 +40,7 @@ export function RightPanel() {
       const minutes = String(now.getMinutes()).padStart(2, '0');
       const seconds = String(now.getSeconds()).padStart(2, '0');
       setCurrentTime(`${hours}h:${minutes}m:${seconds}s`);
+    
     }, 1000);
   
     const handleClickOutside = (event: MouseEvent) => {
@@ -72,6 +73,8 @@ export function RightPanel() {
     window.addEventListener('resize', handleResize);
     const mainElement = document.querySelector('main');
     mainElement?.addEventListener('scroll', handleMainScroll);
+    console.log(isMobile.valueOf())
+
   
     return () => {
       clearInterval(timer);
